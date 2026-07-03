@@ -3,7 +3,7 @@
 import argparse
 from .config import SimulationConfig
 from .models import Pipe, Hole, Tub, Fluid, Environment
-from .simulation import simulate_euler, simulate_rk4, simulate_scipy
+from .simulation import simulate_euler, simulate_rk4
 from .utils import format_time, volume_to_liters, print_state, configure_rich
 from rich.table import Table
 
