@@ -1,8 +1,5 @@
 # simulations/tub_simulation/simulation.py
-
-import math
-import numpy as np
-from typing import List, Callable
+from typing import List
 from .models import SimulationState, Tub, Pipe, Hole, Fluid, Environment
 from .physics import volume_to_height, outflow_rate_by_height, clamp_volume, inflow_rate
 
@@ -88,41 +85,5 @@ def simulate_rk4(tub: Tub, pipe: Pipe, fluid: Fluid, env: Environment,
         state.outflow_rate = outflow_rate_by_height(state.water_height, tub.holes, fluid, env.gravity)
         # Increment time
         time += dt
-
-    return history
-
-def simulate_scipy(tub: Tub, pipe: Pipe, fluid: Fluid, env: Environment,
-                   dt: float, total_time: float) -> List[SimulationState]:
-    """
-    Run the simulation using scipy.integrate.solve_ivp (adaptive RK45).
-    Returns a list of SimulationState at intervals of dt.
-    """
-    from scipy.integrate import solve_ivp
-
-    # Define the RHS of dV/dt = Qin - Qout
-    def deriv(t, V):
-        h = volume_to_height(V, tub)
-        Qin = pipe.flow_rate
-        Qout = outflow_rate_by_height(h, tub.holes, fluid, env.gravity)
-        return Qin - Qout
-
-    # Time points for output
-    t_eval = np.arange(0, total_time + dt, dt)
-    # Solve ODE
-    sol = solve_ivp(fun=deriv, t_span=(0, total_time), y0=[0.0],
-                    t_eval=t_eval, method='RK45', vectorized=True)
-
-    history: List[SimulationState] = []
-    for t, V in zip(sol.t, sol.y[0]):
-        state = SimulationState()
-        state.time = float(t)
-        state.water_volume = float(V)
-        if state.water_volume > tub.capacity:
-            state.is_overflowing = True
-        state.water_volume = clamp_volume(state.water_volume, tub)
-        state.water_height = volume_to_height(state.water_volume, tub)
-        state.inflow_rate = pipe.flow_rate
-        state.outflow_rate = outflow_rate_by_height(state.water_height, tub.holes, fluid, env.gravity)
-        history.append(state)
 
     return history

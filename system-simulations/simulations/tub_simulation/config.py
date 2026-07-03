@@ -1,7 +1,6 @@
 # simulations/tub_simulation/config.py
 
 from pydantic import BaseModel, Field
-import pathlib
 
 class SimulationConfig(BaseModel):
     """

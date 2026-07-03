@@ -9,7 +9,7 @@ from rich.table import Table
 
 def main():
     parser = argparse.ArgumentParser(description="Tub Flow Simulation")
-    parser.add_argument("--method", choices=["euler", "rk4", "scipy"], default="euler",
+    parser.add_argument("--method", choices=["euler", "rk4"], default="euler",
                         help="Numerical integration method")
     parser.add_argument("--scenario", choices=["constant", "overflow", "multiple"], default="constant",
                         help="Scenario to simulate")
@@ -43,8 +43,6 @@ def main():
         history = simulate_euler(tub, pipe, fluid, env, dt=config.time_step, total_time=config.total_time)
     elif args.method == "rk4":
         history = simulate_rk4(tub, pipe, fluid, env, dt=config.time_step, total_time=config.total_time)
-    elif args.method == "scipy":
-        history = simulate_scipy(tub, pipe, fluid, env, dt=config.time_step, total_time=config.total_time)
     else:
         raise ValueError("Unknown method")
 
